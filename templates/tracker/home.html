@@ -7,147 +7,9 @@
     <title>ChopAlert - Food Spots Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            position: relative;
-            background: url("{% static 'images/bg2.jpg' %}") no-repeat center center fixed;
-            background-size: cover;
-            margin: 0; /* ensure full coverage */
-            min-height: 100vh;
-        }
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-            body::before {
-            content: "";
-            position: fixed; /* or absolute */
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0, 0, 0, 0.082); /* black with 40% opacity */
-            pointer-events: none; /* so clicks pass through */
-            z-index: 0;
-        }
-
-    
-        </style>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #ffffff;
-        }
-
-        header {
-            background-color: #ff5722;
-            color: white;
-            padding: 20px 40px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        a {
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-            background: #333;
-            padding: 10px 15px;
-            border-radius: 6px;
-            transition: background 0.3s ease;
-        }
-
-        a:hover {
-            background: #000;
-        }
-
-        #map {
-            height: 400px;
-            margin: 20px auto;
-            max-width: 90%;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .container {
-            max-width: 1300px;
-            margin: auto;
-            padding: 20px;
-        }
-
-        h2 {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 5px;
-            margin-top: 40px;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            background: white;
-            margin: 10px 0;
-            padding: 15px 20px;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease;
-        }
-
-        li:hover {
-            transform: translateY(-2px);
-        }
-
-        .popup-img {
-            border-radius: 8px;
-            margin-top: 5px;
-        }
-
-
-        <style>
-.filter-form {
-  margin: 20px auto;
-  display: flex;
-  justify-content: center;
-}
-
-.filter-controls {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.filter-select,
-.search-input {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
-}
-
-.filter-select:focus,
-.search-input:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.filter-btn {
-  padding: 10px 18px;
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.filter-btn:hover {
-  background-color: #0056b3;
-}
-</style>
-
-    </style>
 </head>
 
 <body>
@@ -180,67 +42,12 @@
     
       
 
-    <div id="map"></div>
+    <div class="map-container">
+        <div id="map"></div>
+    </div>
 
     <div class="container">
-        <style>
-            /* Map height */
-            #map {
-                height: 500px;
-                border-radius: 10px;
-                margin-bottom: 30px;
-            }
         
-            /* Grid container for cards */
-            .spot-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 20px;
-                margin: 40px;
-            }
-        
-            .spot-card {
-                background: #fff;
-                border-radius: 12px;
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
-                overflow: hidden;
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-            }
-        
-            .spot-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            }
-        
-            .spot-card img {
-                width: 100%;
-                height: 180px;
-                object-fit: cover;
-            }
-        
-            .spot-card-content {
-                padding: 15px 20px;
-            }
-        
-            .spot-card h3 {
-                margin: 0;
-                font-size: 18px;
-                color: #ff5722;
-            }
-        
-            .spot-card p {
-                margin: 8px 0 0;
-                font-size: 14px;
-                color: #555;
-            }
-        
-            .spot-card time {
-                display: block;
-                margin-top: 10px;
-                font-size: 12px;
-                color: #999;
-            }
-        </style>
         </head>
         
         <body>
