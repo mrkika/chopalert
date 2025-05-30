@@ -61,7 +61,7 @@
                     {% if spot.photo %}
                     <img src="{{ spot.photo.url }}" alt="Food Photo">
                     {% else %}
-                    <img src="{% static 'default-food.jpg' %}" alt="No Image Available">
+                    <img src="{% static 'images/bg2.jpg' %}" alt="No Image Available">
                     {% endif %}
                     <div class="spot-card-content">
                         <h3>{{ spot.get_food_type_display }}</h3>
