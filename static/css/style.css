@@ -1,0 +1,10 @@
+body {
+    background-image: url("{% static 'chopalert-bg.png' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /* Optional: keeps bg fixed during scroll */
+}
+
+
