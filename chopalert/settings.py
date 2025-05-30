@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-iyb55w*39s7_zdem=o+fs3k!dt$r5yg&61q@opaaas0&_r*(^)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['chopalert.onrender.com']
 
 
 # Application definition
@@ -48,6 +48,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = "chopalert.urls"
