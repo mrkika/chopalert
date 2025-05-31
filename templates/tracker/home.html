@@ -15,10 +15,21 @@
 <body>
 
     <header>
-        <h1>ChopAlert</h1>
-        <p>Discover local street food spots around you</p>
-        <a href="{% url 'post_spot' %}">📍 Post a Food Spot</a>
+        <div class="logo-container">
+            <img src="{% static 'images/logo.png' %}" alt="ChopAlert Logo" class="logo">
+            <p>Discover local street food spots around you</p>
+        </div>
+    
+        <nav class="main-nav">
+            <a href="#">How It Works</a>
+            <a href="#">Vendors</a>
+            <a href="#">Signup</a>
+            <a href="#">Explore</a>
+        </nav>
+    
+        <a href="{% url 'post_spot' %}" class="post-btn">📍 Post a Food Spot</a>
     </header>
+    
 
     <form method="get" class="filter-form">
         <div class="filter-controls">
@@ -47,6 +58,7 @@
     </div>
 
     <div class="container">
+        <button id="locate-btn" onclick="useMyLocation()">📍 Use My Location</button>
         
         </head>
         
@@ -59,10 +71,13 @@
                 {% for spot in spots %}
                 <div class="spot-card">
                     {% if spot.photo %}
-                    <img src="{{ spot.photo.url }}" alt="Food Photo">
+                    <img src="{{ spot.photo.url }}" alt="Food Photo" data-lat="{{ spot.latitude }}" data-lng="{{ spot.longitude }}"
+                        class="spot-img">
                     {% else %}
-                    <img src="{% static 'images/bg2.jpg' %}" alt="No Image Available">
+                    <img src="{% static 'images/bg2.jpg' %}" alt="No Image Available" data-lat="{{ spot.latitude }}"
+                        data-lng="{{ spot.longitude }}" class="spot-img">
                     {% endif %}
+
                     <div class="spot-card-content">
                         <h3>{{ spot.get_food_type_display }}</h3>
                         <p>{{ spot.description|default:"No description" }}</p>
@@ -75,36 +90,114 @@
                 </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script>
-        const map = L.map('map').setView([6.5244, 3.3792], 13);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(map);
+    <div id="directionsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Directions to Food Spot</h2>
+            <div id="routeMap" style="height: 300px;"></div>
+            <div class="distance-info">
+                <p>🚗 Driving: <span id="drivingDist">Feature Coming Soon</span></p>
+                <p>🏍️ Motorcycle: <span id="bikeDist">Feature Coming Soon</span></p>
+                <p>🚙 Tricycle: <span id="kekeDist">Feature Coming Soon</span></p>
+                <p>🚶 Walking: <span id="walkDist">Feature Coming Soon</span></p>
+            </div>
+        </div>
+    </div>
+      
+  
 
-        const spots = [
-            {% for spot in spots %}
-        {
-            lat: {{ spot.latitude }},
-            lng: {{ spot.longitude }},
-            food_type: "{{ spot.get_food_type_display }}",
-                description: "{{ spot.description|escapejs }}",
-                    posted_at: "{{ spot.posted_at|date:'SHORT_DATETIME_FORMAT' }}",
-                        photo_url: "{% if spot.photo %}{{ spot.photo.url }}{% else %}''{% endif %}"
-        } {% if not forloop.last %}, {% endif %}
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script src="{% static 'js/map.js' %}"></script>
+<script>
+    const map = L.map('map').setView([6.5244, 3.3792], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map);
+
+    const spots = [
+        {% for spot in spots %}
+    {
+        lat: {{ spot.latitude }},
+        lng: {{ spot.longitude }},
+        food_type: "{{ spot.get_food_type_display }}",
+        description: "{{ spot.description|escapejs }}",
+        posted_at: "{{ spot.posted_at|date:'SHORT_DATETIME_FORMAT' }}",
+        photo_url: "{% if spot.photo %}{{ spot.photo.url }}{% else %}''{% endif %}"
+    }   
+        {% if not forloop.last %}, {% endif %}
         {% endfor %}
-        ];
+    ];
 
-        spots.forEach(spot => {
-            const marker = L.marker([spot.lat, spot.lng]).addTo(map);
-            let popupContent = `<b>${spot.food_type}</b><br>${spot.description}<br><small>Posted at ${spot.posted_at}</small>`;
-            if (spot.photo_url) {
-                popupContent += `<br><img src="${spot.photo_url}" class="popup-img" alt="Food photo" width="100"/>`;
-            }
-            marker.bindPopup(popupContent);
-        });
-    </script>
+    spots.forEach(spot => {
+        const marker = L.marker([spot.lat, spot.lng]).addTo(map);
+        let popupContent = `<b>${spot.food_type}</b><br>${spot.description}<br><small>Posted at ${spot.posted_at}</small>`;
+        if (spot.photo_url) {
+            popupContent += `<br><img src="${spot.photo_url}" class="popup-img" alt="Food photo" width="100"/>`;
+        }
+        marker.bindPopup(popupContent);
+    });
+</script>
+
+<script>
+let userLat = null, userLng = null;
+
+navigator.geolocation.getCurrentPosition(pos => {
+  userLat = pos.coords.latitude;
+  userLng = pos.coords.longitude;
+});
+
+const modal = document.getElementById("directionsModal");
+const closeBtn = document.querySelector(".close-btn");
+const drivingSpan = document.getElementById("drivingDist");
+const bikeSpan = document.getElementById("bikeDist");
+const walkSpan = document.getElementById("walkDist");
+const kekeSpan = document.getElementById("kekeDist");
+
+document.querySelectorAll(".spot-img").forEach(img => {
+  img.addEventListener("click", () => {
+    const spotLat = img.dataset.lat;
+    const spotLng = img.dataset.lng;
+
+    modal.style.display = "block";
+
+    if (window.routeMap) {
+      window.routeMap.remove();
+    }
+
+    window.routeMap = L.map("routeMap").setView([userLat, userLng], 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '© OpenStreetMap'
+    }).addTo(window.routeMap);
+
+    L.Routing.control({
+      waypoints: [
+        L.latLng(userLat, userLng),
+        L.latLng(spotLat, spotLng)
+      ]
+    }).addTo(window.routeMap);
+
+    // Placeholder distances
+    drivingSpan.textContent = "Calculating...";
+    bikeSpan.textContent = "Calculating...";
+    walkSpan.textContent = "Calculating...";
+    kekeSpan.textContent = "Same as driving";
+
+    // TODO: Replace with API call to get actual distances per transport mode
+    setTimeout(() => {
+      drivingSpan.textContent = "2.5 km";
+      bikeSpan.textContent = "2.1 km";
+      walkSpan.textContent = "3.0 km";
+    }, 1000);
+  });
+});
+
+closeBtn.onclick = () => modal.style.display = "none";
+window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+</script>
+
 
 </body>
 

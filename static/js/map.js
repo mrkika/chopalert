@@ -16,3 +16,21 @@ map.on('click', function (e) {
     document.getElementById('location-info').innerHTML =
         `Food spot location: ${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
 });
+
+
+function useMyLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            map.setView([lat, lng], 15); // Zoom into location
+            L.marker([lat, lng]).addTo(map)
+                .bindPopup("You are here!")
+                .openPopup();
+        }, function (error) {
+            alert("Error fetching your location");
+        });
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
+}
